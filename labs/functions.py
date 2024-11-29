@@ -16,34 +16,35 @@ def dynamicProgram(unaryCosts, pairwiseCosts):
     # define parent matrix - each element will contain the (vertical) index of
     # the node that preceded it on the path.  Since the first column has no
     # parents, we will leave it set to zeros.
-    parents = np.zeros([nNodesPerPosition, nPosition])
+    parents = np.zeros([nNodesPerPosition, nPosition], dtype=int)
 
     # FORWARD PASS
 
     # TODO:  fill in first column of minimum cost matrix
+    minimumCost[:, 0] = unaryCosts[:, 0]
 
     # Now run through each position (column)
     for cPosition in range(1,nPosition):
         # run through each node (element of column)
         for cNode in range(nNodesPerPosition):
             # now we find the costs of all paths from the previous column to this node
-            possPathCosts = np.zeros([nNodesPerPosition,1])
+            possPathCosts = np.zeros([nNodesPerPosition, 1])
             for cPrevNode in range(nNodesPerPosition):
                 # TODO  - fill in elements of possPathCosts
-                possPathCosts[cPrevNode,0] = 0 
+                possPathCosts[cPrevNode,0] = (minimumCost[cPrevNode, cPosition - 1] + pairwiseCosts[cPrevNode, cNode] + unaryCosts[cNode, cPosition])
 
             # TODO - find the minimum of the possible paths 
-            minCost = 0 
-            ind = 0 
+            minCost = np.min(possPathCosts)
+            ind = np.argmin(possPathCosts)
             
             # Assertion to check that there is only one minimum cost.
             # assert(len(np.where(possPathCosts == minCost)[0]) == 1)
 
             # TODO - store the minimum cost in the minimumCost matrix
-            # minimumCost[, ] = 
+            minimumCost[cNode, cPosition] = minCost 
             
             # TODO - store the parent index in the parents matrix
-            # parents[, ] = 
+            parents[cNode, cPosition] = ind
 
     #BACKWARD PASS
 
@@ -52,44 +53,62 @@ def dynamicProgram(unaryCosts, pairwiseCosts):
     
     #TODO  - find the index of the overall minimum cost from the last column and put this
     #into the last entry of best path
-    minCost = 0 
-    minInd = 0 
+    minCost = np.min(minimumCost[:, -1])
+    minInd = np.argmin(minimumCost[:, -1])
     bestPath[-1] = minInd
 
     # TODO - find the parent of the node you just found
-    bestParent = 0 
+    bestParent = parents[minInd, -1]
 
     # run backwards through the cost matrix tracing the best patch
     for cPosition in range(nPosition-2,-1,-1):
         # TODO - work through matrix backwards, updating bestPath by tracing parents
-        # bestPath = 
-        # bestParent =
-        pass 
+        bestPath[cPosition] = bestParent 
+        bestParent = int(parents[bestParent, cPosition])
 
-    # TODO: REMOVE THIS WHEN YOU ARE DONE
-    bestPath = np.floor(np.random.random(nPosition)*nNodesPerPosition)
     return bestPath
 
-
 def dynamicProgramVec(unaryCosts, pairwiseCosts):
-    
-    # same preprocessing code
-    
-    # count number of positions (i.e. pixels in the scanline), and nodes at each
-    # position (i.e. the number of distinct possible disparities at each position)
     nNodesPerPosition = len(unaryCosts)
     nPosition = len(unaryCosts[0])
 
-    # define minimum cost matrix - each element will eventually contain
-    # the minimum cost to reach this node from the left hand side.
-    # We will update it as we move from left to right
+    # Define minimum cost matrix
     minimumCost = np.zeros([nNodesPerPosition, nPosition])
 
+    # Define parent matrix
+    parents = np.zeros([nNodesPerPosition, nPosition], dtype=int)
 
+    # Fill the first column of minimumCost
+    minimumCost[:, 0] = unaryCosts[:, 0]
 
-    # TODO: fill this function in. (hint use tiling and perform calculations columnwise with matricies)
+    # FORWARD PASS
+    for cPosition in range(1, nPosition):
+        # Tile previous costs
+        # Tile Repeats these costs for all current nodes, creating a matrix of shape (nNodesPerPosition, nNodesPerPosition) where:
+        #       •	Rows correspond to the previous nodes.
+        #       •	Columns correspond to the current nodes.
+        prevCosts = np.tile(minimumCost[:, cPosition - 1], (nNodesPerPosition, 1)).T
 
-    # TODO: REMOVE THIS WHEN YOU ARE DONE
-    bestPath = np.floor(np.random.random(nPosition)*nNodesPerPosition)
+        # Compute total costs
+        totalCosts = prevCosts + pairwiseCosts + unaryCosts[:, cPosition][None, :]
+
+        # Find minimum costs and parent indices
+        minCosts = np.min(totalCosts, axis=0)
+        parentIndices = np.argmin(totalCosts, axis=0)
+
+        # Update minimumCost and parents
+        minimumCost[:, cPosition] = minCosts
+        parents[:, cPosition] = parentIndices
+
+    # BACKWARD PASS
+    bestPath = np.zeros([nPosition, 1], dtype=int)
+
+    # Find the starting point
+    minInd = np.argmin(minimumCost[:, -1])
+    bestPath[-1] = minInd
+
+    # Trace back the path
+    for cPosition in range(nPosition - 2, -1, -1):
+        bestPath[cPosition] = parents[bestPath[cPosition + 1], cPosition + 1]
 
     return bestPath
