@@ -1,4 +1,4 @@
-### **Lab 4a: Evaluate Colmap reconstruction with varying Parameters**
+# **Lab 4a: Evaluate Colmap reconstruction with varying Parameters**
 
 We are switching from a Jupyter notebook to a Python file format for this exercise because the code has significant execution time and Jupyter notebooks may experience kernel crashes during long-running processes. For the first half of Lab 4, you will:
 
