@@ -2,7 +2,7 @@ import cv2
 import os
 
 # Parameters
-output_folder = "./calibration_images"  # Folder to save the images
+output_folder = "./lab4_images"  # Folder to save the images
 chessboard_size = (4, 7)  # Inner corners in the chessboard
 capture_key = 'c'  # Key to capture the image
 exit_key = 'q'  # Key to exit the program
@@ -12,7 +12,7 @@ exit_key = 'q'  # Key to exit the program
 os.makedirs(output_folder, exist_ok=True)
 
 # Open the webcam (use the appropriate index if multiple cameras are connected)
-cap = cv2.VideoCapture(0)  # Change the index to 1, 2, etc., if needed
+cap = cv2.VideoCapture(1)  # Change the index to 1, 2, etc., if needed
 
 cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
 cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 800)
@@ -44,7 +44,7 @@ while True:
 
     if key == ord(capture_key):  # Capture and save the image
         if ret:
-            image_path = os.path.join(output_folder, f"calibration_image_{image_count:02d}.jpg")
+            image_path = os.path.join(output_folder, f"own_image_{image_count:02d}.jpg")
             cv2.imwrite(image_path, frame)
             print(f"Image saved: {image_path}")
             image_count += 1
