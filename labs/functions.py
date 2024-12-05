@@ -7,7 +7,7 @@ def dynamicProgram(unaryCosts, pairwiseCosts):
 
     # Count number of positions  (i.e. pixels in the scanline), 
     # and nodes at each position (i.e. the number of distinct possible disparities at each position)
-    nNodesPerPosition = unaryCosts.shape[0] # Number of rows = number of nodes
+    nNodesPerPosition = unaryCosts.shape[0] # Number of rows = number of possible disparities
     nPosition = unaryCosts.shape[1] # Number of columns = number of positions
 
     # Define minimum cost matrix 
