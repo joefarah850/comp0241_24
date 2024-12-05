@@ -67,27 +67,6 @@ def dynamicProgram(unaryCosts, pairwiseCosts):
     return bestPath
 
 
-# def dynamicProgramVec(unaryCosts, pairwiseCosts):
-    
-#     # same preprocessing code
-    
-#     # count number of positions (i.e. pixels in the scanline), and nodes at each
-#     # position (i.e. the number of distinct possible disparities at each position)
-#     nNodesPerPosition = len(unaryCosts)
-#     nPosition = len(unaryCosts[0])
-
-#     # define minimum cost matrix - each element will eventually contain
-#     # the minimum cost to reach this node from the left hand side.
-#     # We will update it as we move from left to right
-#     minimumCost = np.zeros([nNodesPerPosition, nPosition])
-
-#     # TODO: fill this function in. (hint use tiling and perform calculations columnwise with matricies)
-
-#     # TODO: REMOVE THIS WHEN YOU ARE DONE
-#     bestPath = np.floor(np.random.random(nPosition)*nNodesPerPosition)
-
-#     return bestPath
-
 def dynamicProgramVec(unaryCosts, pairwiseCosts):
     # Count number of positions and nodes per position
     nNodesPerPosition = unaryCosts.shape[0]
